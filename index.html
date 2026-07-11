@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chloé &amp; Sylvain · Carte du Feÿ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: oklch(97.5% 0.02 100);
+  --cream-deep: oklch(94.5% 0.035 95);
+  --bordeaux: oklch(31% 0.13 25);
+  --bordeaux-soft: oklch(38% 0.12 25);
+  --terracotta: oklch(58% 0.13 45);
+  --rose: oklch(76% 0.08 20);
+  --olive: oklch(76% 0.1 115);
+  --olive-deep: oklch(55% 0.09 115);
+  --gold: oklch(82% 0.1 85);
+  --gold-deep: oklch(68% 0.11 80);
+  --ink: oklch(34% 0.06 30);
+  --ink-soft: oklch(48% 0.05 40);
+  --space-xs: 4px; --space-sm: 8px; --space-md: 16px;
+  --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: "EB Garamond", serif;
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Header ---------- */
+header {
+  text-align: center;
+  padding: clamp(28px, 5vw, 56px) var(--space-lg) clamp(18px, 3vw, 32px);
+  position: relative;
+}
+.lang-toggle {
+  position: absolute;
+  top: var(--space-md); right: var(--space-md);
+  display: flex; gap: 2px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px; letter-spacing: 0.18em;
+}
+.lang-toggle button {
+  background: none; border: none; cursor: pointer;
+  font: inherit; color: var(--ink-soft);
+  padding: 6px 8px;
+}
+.lang-toggle button.active { color: var(--bordeaux); }
+.lang-toggle span { color: var(--gold-deep); align-self: center; }
+.eyebrow {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(10px, 1.2vw, 12px);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--bordeaux);
+}
+h1 {
+  font-family: "Monsieur La Doulaise", cursive;
+  font-weight: 400;
+  font-size: clamp(52px, 9vw, 96px);
+  line-height: 1.1;
+  color: var(--terracotta);
+  margin: clamp(2px, 1vw, 10px) 0 clamp(0px, 0.5vw, 6px);
+}
+.venue {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(11px, 1.4vw, 14px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--bordeaux);
+}
+.venue .sep { color: var(--gold-deep); padding: 0 0.4em; }
+.garland {
+  display: flex; justify-content: center; align-items: center;
+  gap: 7px; margin-top: clamp(14px, 2.5vw, 22px);
+}
+.garland i {
+  border-radius: 50%;
+  width: 5px; height: 5px;
+  background: var(--gold-deep);
+}
+.garland i:nth-child(3n+1) { background: var(--terracotta); width: 7px; height: 7px; }
+.garland i:nth-child(4n+2) { background: var(--olive); }
+.garland i:nth-child(5n) { background: var(--rose); }
+
+/* ---------- Day tabs ---------- */
+nav.days {
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md) var(--space-lg);
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in oklch, var(--cream) 92%, transparent);
+  backdrop-filter: blur(6px);
+}
+nav.days button {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(11px, 1.3vw, 13px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border: 1px solid color-mix(in oklch, var(--bordeaux) 35%, var(--cream));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--bordeaux);
+  cursor: pointer;
+  transition: background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s, transform 0.25s;
+}
+nav.days button:hover { transform: translateY(-1px); }
+nav.days button.active { background: var(--bordeaux); border-color: var(--bordeaux); color: var(--cream); }
+nav.days button .num { font-size: 1.25em; font-weight: 600; }
+
+/* ---------- Main layout ---------- */
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 58fr) minmax(300px, 34fr);
+  gap: clamp(16px, 3vw, 40px);
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 clamp(12px, 3vw, 40px) var(--space-2xl);
+  align-items: start;
+}
+
+/* ---------- Map ---------- */
+.map-wrap { position: sticky; top: 74px; }
+.map-frame {
+  position: relative;
+  border: 1px solid color-mix(in oklch, var(--gold-deep) 55%, var(--cream));
+  outline: 6px solid var(--cream-deep);
+  background: var(--cream-deep);
+  box-shadow: 0 18px 48px -24px oklch(30% 0.08 40 / 0.45);
+}
+.map-frame img { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+.pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: clamp(24px, 2.6vw, 31px);
+  height: clamp(24px, 2.6vw, 31px);
+  border-radius: 50%;
+  background: var(--bordeaux);
+  color: var(--cream);
+  border: 1.5px solid var(--cream);
+  box-shadow: 0 2px 6px oklch(25% 0.08 30 / 0.4);
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1), background 0.25s, opacity 0.3s, box-shadow 0.25s;
+  z-index: 5;
+}
+.pin:hover { transform: translate(-50%, -50%) scale(1.22); z-index: 20; }
+.pin.lit {
+  background: var(--terracotta);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--gold) 70%, transparent), 0 3px 9px oklch(25% 0.08 30 / 0.45);
+  z-index: 15;
+}
+.pin.dim { opacity: 0.28; }
+.pin.selected {
+  transform: translate(-50%, -50%) scale(1.3);
+  background: var(--terracotta);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--gold) 80%, transparent), 0 4px 10px oklch(25% 0.08 30 / 0.5);
+  z-index: 25;
+}
+.pin-label {
+  position: absolute;
+  transform: translate(-50%, 8px);
+  background: var(--cream);
+  border: 1px solid color-mix(in oklch, var(--gold-deep) 60%, var(--cream));
+  color: var(--bordeaux);
+  font-family: "Bodoni Moda", serif;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 11px 4px;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: 30;
+  box-shadow: 0 4px 12px -4px oklch(30% 0.08 40 / 0.4);
+}
+.pin-label.show { opacity: 1; }
+
+/* ---------- Legend / filters ---------- */
+.legend {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 2px 0;
+}
+.legend .cap {
+  font-family: "Bodoni Moda", serif;
+  font-size: 10.5px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-right: var(--space-xs);
+}
+.legend button {
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--olive-deep) 45%, var(--cream));
+  background: transparent;
+  color: var(--olive-deep);
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+}
+.legend button:hover { background: color-mix(in oklch, var(--olive) 25%, var(--cream)); }
+.legend button.on { background: var(--olive-deep); border-color: var(--olive-deep); color: var(--cream); }
+
+/* ---------- Programme ---------- */
+.prog-title {
+  font-family: "Bodoni Moda", serif;
+  font-size: clamp(19px, 2.2vw, 25px);
+  font-weight: 500;
+  color: var(--bordeaux);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+.prog-sub {
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 15.5px;
+  margin-bottom: var(--space-lg);
+}
+.event {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: var(--space-md);
+  padding: 14px 10px 14px 2px;
+  border-bottom: 1px dotted color-mix(in oklch, var(--gold-deep) 50%, var(--cream));
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.25s;
+}
+.event:hover { background: color-mix(in oklch, var(--cream-deep) 65%, var(--cream)); }
+.event.active { background: color-mix(in oklch, var(--gold) 22%, var(--cream)); }
+.event.no-pin { cursor: default; }
+.ev-time {
+  font-family: "Bodoni Moda", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--bordeaux);
+  letter-spacing: 0.06em;
+  padding-top: 3px;
+  white-space: pre-line;
+  line-height: 1.35;
+}
+.ev-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+}
+.ev-name .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block; flex: none;
+  position: relative; top: -2px;
+}
+.ev-place {
+  font-family: "Bodoni Moda", serif;
+  font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--terracotta);
+  margin-top: 3px;
+}
+.ev-place.tbd { color: var(--ink-soft); }
+.ev-desc { font-size: 15px; color: var(--ink-soft); margin-top: 4px; font-style: italic; }
+.chip {
+  font-family: "Bodoni Moda", serif;
+  font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 3px 9px 2px; border-radius: 999px;
+  position: relative; top: -2px;
+}
+.chip.tbc { background: color-mix(in oklch, var(--rose) 45%, var(--cream)); color: var(--bordeaux-soft); }
+.chip.idea { background: color-mix(in oklch, var(--olive) 35%, var(--cream)); color: var(--olive-deep); }
+
+/* ---------- Footer ---------- */
+footer {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+}
+footer .mono {
+  font-family: "Monsieur La Doulaise", cursive;
+  font-size: 44px;
+  color: var(--gold-deep);
+  line-height: 1;
+}
+footer p {
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 15px;
+  margin-top: var(--space-sm);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  .map-wrap { position: relative; top: 0; }
+  .prog { padding-top: var(--space-md); }
+  .event { grid-template-columns: 64px 1fr; }
+}
+@media (max-width: 640px) {
+  .dates-sep { display: none; }
+  .dates-line { display: block; margin-top: 6px; }
+  nav.days { gap: 6px; }
+  nav.days button { padding: 8px 12px; font-size: 10.5px; letter-spacing: 0.1em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="lang-toggle" role="group" aria-label="Langue">
+    <button id="lang-fr" class="active" onclick="setLang('fr')">FR</button><span>·</span><button id="lang-en" onclick="setLang('en')">EN</button>
+  </div>
+  <p class="eyebrow" data-i18n="eyebrow">Le mariage de</p>
+  <h1>Chloé &amp; Sylvain</h1>
+  <p class="venue">Château du Feÿ <span class="sep">·</span> Bourgogne <span class="sep dates-sep">·</span> <span class="dates-line" data-i18n="dates">25, 26 &amp; 27 août 2026</span></p>
+  <div class="garland" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+</header>
+
+<nav class="days" id="day-tabs"></nav>
+
+<main>
+  <section class="map-wrap" aria-label="Carte du domaine">
+    <div class="map-frame" id="map">
+      <img src="assets/fond-carte.png" alt="Carte aquarelle du Château du Feÿ" draggable="false">
+    </div>
+    <div class="legend" id="legend">
+      <span class="cap" data-i18n="findLabel">Trouver</span>
+      <button data-eq="Logement" data-i18n="eqSleep">Dormir</button>
+      <button data-eq="WC">WC</button>
+      <button data-eq="Douche" data-i18n="eqShower">Douches</button>
+    </div>
+  </section>
+
+  <section class="prog" aria-label="Programme">
+    <h2 class="prog-title" id="prog-title"></h2>
+    <p class="prog-sub" id="prog-sub"></p>
+    <div id="events"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="mono">C&nbsp;&amp;&nbsp;S</div>
+  <p data-i18n="footer">Programme susceptible d’évoluer, la carte aussi. Faites-vous plaisir.</p>
+</footer>
+
+<script>
+/* ============ DONNÉES (source : Notion · Mariage Lieux / Événements) ============ */
+const LIEUX = {
+  1:  { x: 24.6, y: 40.3, fr: "Château",      en: "Château",      eq: ["Logement", "WC", "Douche"] },
+  2:  { x: 30.8, y: 61.5, fr: "Emporium",     en: "Emporium",     eq: [] },
+  3:  { x: 36.3, y: 61.2, fr: "Grange",       en: "Barn",         eq: [] },
+  4:  { x: 42.0, y: 65.6, fr: "Galerie",      en: "Gallery",      eq: [] },
+  5:  { x: 40.3, y: 74.8, fr: "Gym",          en: "Gym",          eq: ["WC", "Douche"] },
+  6:  { x: 35.2, y: 81.3, fr: "Farmhouse",    en: "Farmhouse",    eq: ["Logement"] },
+  7:  { x: 12.8, y: 84.9, fr: "Pigeonnier",   en: "Dovecote",     eq: [] },
+  8:  { x: 63.7, y: 7.2,  fr: "Forêt",        en: "Forest",       eq: [] },
+  9:  { x: 2.2,  y: 76.2, fr: "Pressoir",     en: "Press",        eq: [] },
+  10: { x: 5.1,  y: 66.1, fr: "Cottage",      en: "Cottage",      eq: ["Logement"] },
+  11: { x: 13.6, y: 59.9, fr: "Gîte",         en: "Gîte",         eq: ["Logement"] },
+  12: { x: 84.1, y: 42.8, fr: "Orangerie",    en: "Orangerie",    eq: [] },
+  13: { x: 62.4, y: 62.4, fr: "Potager",      en: "Kitchen garden", eq: [] },
+  14: { x: 70.1, y: 21.9, fr: "Sonic Sphere", en: "Sonic Sphere", eq: [] },
+  15: { x: 68.3, y: 39.4, fr: "Labyrinthe",   en: "Labyrinth",    eq: [] },
+  16: { x: 25.2, y: 53.5, fr: "Fontaine",     en: "Fountain",     eq: [] },
+  17: { x: 32.1, y: 31.5, fr: "Terrasse",     en: "Terrace",      eq: [] },
+  18: { x: 16.4, y: 32.0, fr: "Piscine",      en: "Pool",         eq: [] },
+  19: { x: 51.7, y: 38.8, fr: "Chênes",       en: "Oak trees",    eq: [] },
+  20: { x: 97.0, y: 47.2, fr: "Glamping",     en: "Glamping",     eq: ["Logement"] },
+  21: { x: 48.1, y: 71.5, fr: "Pétanque",     en: "Pétanque",     eq: [] },
+  22: { x: 61.8, y: 75.9, fr: "Parking",      en: "Parking",      eq: [] },
+};
+
+/* type -> couleur palette */
+const TYPES = {
+  ceremonie: "oklch(31% 0.13 25)",
+  repas:     "oklch(58% 0.13 45)",
+  fete:      "oklch(76% 0.08 20)",
+  activite:  "oklch(68% 0.11 80)",
+  logistique:"oklch(76% 0.1 115)",
+};
+
+const EVENTS = [
+  { day: "25", t: "15h00", type: "logistique", fr: "Arrivée des mariés", en: "Couple arrives", tbc: true },
+  { day: "25", t: "16h30", type: "logistique", fr: "Arrivée des invités & check-in", en: "Guests arrive & check-in", tbc: true },
+  { day: "25", t: "17h00", type: "ceremonie", fr: "Répétition de cérémonie", en: "Ceremony rehearsal", tbc: true },
+  { day: "25", t: "18h00", type: "repas", fr: "Welcome dinner & vinyle", en: "Welcome dinner & vinyl", dfr: "Platines au soleil couchant.", den: "Records at sunset." },
+
+  { day: "26", t: "8h00", type: "ceremonie", fr: "Cérémonie du matin", en: "Morning ceremony" },
+  { day: "26", t: "10h00", type: "ceremonie", fr: "Cérémonie", en: "Ceremony" },
+  { day: "26", t: "12h30\n14h30", type: "repas", fr: "Déjeuner", en: "Lunch" },
+  { day: "26", t: "après-midi", type: "activite", fr: "Temps libre & activités", en: "Free time & activities", idea: true, dfr: "Dégustation de vin, yoga… à confirmer.", den: "Wine tasting, yoga… to be confirmed." },
+  { day: "26", t: "18h00", type: "fete", fr: "Vin d’honneur", en: "Vin d’honneur" },
+  { day: "26", t: "20h00", type: "repas", fr: "Dîner", en: "Dinner" },
+  { day: "26", t: "21h30", type: "fete", fr: "Cake cutting", en: "Cake cutting", tbc: true },
+  { day: "26", t: "22h00", type: "ceremonie", fr: "Échange des vœux", en: "Vow ceremony", tbc: true },
+  { day: "26", t: "23h00", type: "fete", fr: "Dancing", en: "Dancing", dfr: "Jusqu’au bout de la nuit.", den: "Till late." },
+
+  { day: "27", t: "9h00", type: "repas", fr: "Brunch", en: "Brunch", tbc: true },
+  { day: "27", t: "10h30", type: "logistique", fr: "Libération des chambres", en: "Room check-out", tbc: true },
+  { day: "27", t: "15h00", type: "logistique", fr: "Départ général", en: "Everyone leaves", tbc: true },
+
+  { day: "cont", t: "3 jours", type: "activite", fr: "Photobooth", en: "Photobooth", lieu: 1 },
+  { day: "cont", t: "3 jours", type: "activite", fr: "Espace lettres (nom à trouver)", en: "Letter corner (name pending)", dfr: "Écrivez-nous un mot, il sera lu bien plus tard.", den: "Write us a note, we’ll read it much later." },
+  { day: "cont", t: "3 jours", type: "activite", fr: "Tournoi de pétanque", en: "Pétanque tournament", idea: true, lieu: 21 },
+  { day: "cont", t: "3 jours", type: "activite", fr: "Coin jeux de société", en: "Board games corner", idea: true },
+  { day: "cont", t: "3 jours", type: "activite", fr: "Chasse au trésor", en: "Treasure hunt", idea: true },
+];
+
+const I18N = {
+  fr: {
+    eyebrow: "Le mariage de", dates: "25, 26 & 27 août 2026",
+    findLabel: "Trouver", eqSleep: "Dormir", eqShower: "Douches",
+    footer: "Programme susceptible d’évoluer, la carte aussi. Faites-vous plaisir.",
+    days: { "25": ["Mar", "25"], "26": ["Mer", "26"], "27": ["Jeu", "27"], cont: ["Les", "3 jours"] },
+    progTitles: { "25": "Mardi 25 août", "26": "Mercredi 26 août", "27": "Jeudi 27 août", cont: "Pendant les 3 jours" },
+    progSubs: {
+      "25": "On arrive, on s’installe, on trinque.",
+      "26": "Le grand jour.",
+      "27": "On prolonge un peu.",
+      cont: "À faire quand vous voulez.",
+    },
+    tbd: "Lieu à définir", tbc: "à confirmer", idea: "idée",
+  },
+  en: {
+    eyebrow: "The wedding of", dates: "25, 26 & 27 August 2026",
+    findLabel: "Find", eqSleep: "Sleep", eqShower: "Showers",
+    footer: "Programme may evolve, so may the map. Enjoy.",
+    days: { "25": ["Tue", "25"], "26": ["Wed", "26"], "27": ["Thu", "27"], cont: ["All", "3 days"] },
+    progTitles: { "25": "Tuesday 25 August", "26": "Wednesday 26 August", "27": "Thursday 27 August", cont: "Throughout the 3 days" },
+    progSubs: {
+      "25": "Arrive, settle in, raise a glass.",
+      "26": "The big day.",
+      "27": "A gentle landing.",
+      cont: "Whenever you feel like it.",
+    },
+    tbd: "Location TBC", tbc: "to confirm", idea: "idea",
+  },
+};
+
+/* ============ ÉTAT ============ */
+let lang = "fr";
+let day = "26";
+let selected = null;   // index d'événement sélectionné
+let eqFilter = null;   // filtre équipement actif
+
+/* ============ CARTE : pins ============ */
+const map = document.getElementById("map");
+const labels = {};
+for (const [id, l] of Object.entries(LIEUX)) {
+  const pin = document.createElement("button");
+  pin.className = "pin";
+  pin.id = "pin-" + id;
+  pin.textContent = id;
+  pin.style.left = l.x + "%";
+  pin.style.top = l.y + "%";
+  pin.setAttribute("aria-label", l.fr);
+  pin.addEventListener("mouseenter", () => showLabel(id));
+  pin.addEventListener("mouseleave", () => { if (selected === null || String(evLieu(selected)) !== id) hideLabel(id); });
+  pin.addEventListener("click", () => pinClick(Number(id)));
+  map.appendChild(pin);
+
+  const lab = document.createElement("div");
+  lab.className = "pin-label";
+  lab.id = "lab-" + id;
+  lab.style.left = l.x + "%";
+  lab.style.top = l.y + "%";
+  map.appendChild(lab);
+  labels[id] = lab;
+}
+function showLabel(id) {
+  const l = LIEUX[id];
+  labels[id].textContent = l[lang];
+  labels[id].classList.add("show");
+  /* label au-dessus si pin en bas de carte, en dessous sinon ; ancre laterale pres des bords */
+  const tx = l.x > 90 ? "-88%" : l.x < 9 ? "-12%" : "-50%";
+  if (l.y > 82) { labels[id].style.transform = `translate(${tx}, calc(-100% - 26px))`; }
+  else { labels[id].style.transform = `translate(${tx}, 20px)`; }
+}
+function hideLabel(id) { labels[id].classList.remove("show"); }
+function clearLabels() { Object.keys(labels).forEach(hideLabel); }
+
+function evLieu(i) { return EVENTS[i] && EVENTS[i].lieu; }
+
+function pinClick(id) {
+  /* si un évènement du jour courant pointe ce pin, le sélectionner */
+  const idx = EVENTS.findIndex((e, i) => e.day === day && e.lieu === id);
+  selectEvent(idx >= 0 ? idx : null, id);
+}
+
+/* ============ TABS ============ */
+const tabsEl = document.getElementById("day-tabs");
+function renderTabs() {
+  tabsEl.innerHTML = "";
+  for (const d of ["25", "26", "27", "cont"]) {
+    const [small, big] = I18N[lang].days[d];
+    const b = document.createElement("button");
+    b.innerHTML = small + "&nbsp;<span class='num'>" + big + "</span>";
+    if (d === day) b.classList.add("active");
+    b.addEventListener("click", () => { day = d; selected = null; render(); });
+    tabsEl.appendChild(b);
+  }
+}
+
+/* ============ PROGRAMME ============ */
+const evEl = document.getElementById("events");
+function renderProg() {
+  document.getElementById("prog-title").textContent = I18N[lang].progTitles[day];
+  document.getElementById("prog-sub").textContent = I18N[lang].progSubs[day];
+  evEl.innerHTML = "";
+  EVENTS.forEach((e, i) => {
+    if (e.day !== day) return;
+    const row = document.createElement("div");
+    row.className = "event" + (e.lieu ? "" : " no-pin") + (selected === i ? " active" : "");
+    const chips = (e.tbc ? `<span class="chip tbc">${I18N[lang].tbc}</span>` : "") +
+                  (e.idea ? `<span class="chip idea">${I18N[lang].idea}</span>` : "");
+    const place = e.lieu
+      ? `<div class="ev-place">${LIEUX[e.lieu][lang]} · n°${e.lieu}</div>`
+      : `<div class="ev-place tbd">${I18N[lang].tbd}</div>`;
+    const desc = e["d" + lang] ? `<div class="ev-desc">${e["d" + lang]}</div>` : "";
+    row.innerHTML = `
+      <div class="ev-time">${e.t}</div>
+      <div>
+        <div class="ev-name"><span class="dot" style="background:${TYPES[e.type]}"></span>${e[lang]} ${chips}</div>
+        ${place}${desc}
+      </div>`;
+    if (e.lieu) row.addEventListener("click", () => selectEvent(selected === i ? null : i));
+    evEl.appendChild(row);
+  });
+}
+
+/* ============ SÉLECTION / FILTRES ============ */
+function selectEvent(i, pinOverride) {
+  selected = i;
+  eqFilter = null;
+  render();
+  const id = i !== null ? EVENTS[i].lieu : pinOverride;
+  if (id) {
+    const pin = document.getElementById("pin-" + id);
+    pin.classList.add("selected");
+    showLabel(id);
+    if (window.innerWidth <= 900 && i !== null) {
+      document.querySelector(".map-frame").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+}
+
+const legendEl = document.getElementById("legend");
+legendEl.querySelectorAll("button").forEach((b) => {
+  b.addEventListener("click", () => {
+    eqFilter = eqFilter === b.dataset.eq ? null : b.dataset.eq;
+    selected = null;
+    render();
+  });
+});
+
+function paintPins() {
+  clearLabels();
+  for (const [id, l] of Object.entries(LIEUX)) {
+    const pin = document.getElementById("pin-" + id);
+    pin.classList.remove("lit", "dim", "selected");
+    if (eqFilter) {
+      if (l.eq.includes(eqFilter)) { pin.classList.add("lit"); showLabel(id); }
+      else pin.classList.add("dim");
+    }
+  }
+  legendEl.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.eq === eqFilter));
+}
+
+/* ============ LANGUE ============ */
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l;
+  document.getElementById("lang-fr").classList.toggle("active", l === "fr");
+  document.getElementById("lang-en").classList.toggle("active", l === "en");
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const v = I18N[l][el.dataset.i18n];
+    if (v) el.innerHTML = v;
+  });
+  render();
+}
+
+function render() {
+  renderTabs();
+  renderProg();
+  paintPins();
+  if (selected !== null && EVENTS[selected].lieu) {
+    const id = EVENTS[selected].lieu;
+    document.getElementById("pin-" + id).classList.add("selected");
+    showLabel(id);
+  }
+}
+render();
+</script>
+</body>
+</html>
