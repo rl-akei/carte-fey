@@ -130,6 +130,63 @@ main {
 
 /* ---------- Map ---------- */
 .map-wrap { position: sticky; top: 74px; }
+.view-toggle {
+  display: flex; gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.view-toggle button {
+  font-family: "Bodoni Moda", serif;
+  font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 9px 16px;
+  border: 1px solid color-mix(in oklch, var(--terracotta) 50%, var(--cream));
+  border-radius: 999px;
+  background: transparent; color: var(--terracotta);
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+}
+.view-toggle button.active { background: var(--terracotta); border-color: var(--terracotta); color: var(--cream); }
+#scene3d {
+  position: relative;
+  display: none;
+  border: 1px solid color-mix(in oklch, var(--gold-deep) 55%, var(--cream));
+  outline: 6px solid var(--cream-deep);
+  background: var(--cream-deep);
+  box-shadow: 0 18px 48px -24px oklch(30% 0.08 40 / 0.45);
+  height: min(72vh, 640px);
+  overflow: hidden;
+  cursor: grab;
+}
+#scene3d.on { display: block; }
+#scene3d canvas { display: block; }
+.scene-hud {
+  position: absolute; bottom: 10px; left: 10px; z-index: 10;
+  display: flex; gap: 6px;
+}
+.scene-hud button {
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in oklch, var(--bordeaux) 30%, var(--cream));
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--cream) 85%, transparent);
+  color: var(--bordeaux);
+  cursor: pointer;
+}
+.scene-hud button.on { background: var(--bordeaux); color: var(--cream); border-color: var(--bordeaux); }
+#label3d {
+  position: absolute; z-index: 11;
+  background: var(--cream);
+  border: 1px solid color-mix(in oklch, var(--gold-deep) 60%, var(--cream));
+  color: var(--bordeaux);
+  font-family: "Bodoni Moda", serif;
+  font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 11px 4px; border-radius: 999px;
+  white-space: nowrap; pointer-events: none;
+  box-shadow: 0 4px 12px -4px oklch(30% 0.08 40 / 0.4);
+  transform: translate(-50%, -140%);
+  display: none;
+}
+.map-frame.off { display: none; }
 .map-frame {
   position: relative;
   border: 1px solid color-mix(in oklch, var(--gold-deep) 55%, var(--cream));
@@ -337,8 +394,20 @@ footer p {
 
 <main>
   <section class="map-wrap" aria-label="Carte du domaine">
+    <div class="view-toggle" role="group" aria-label="Vue">
+      <button id="v2d" class="active" data-i18n="view2d">Aquarelle</button>
+      <button id="v3d" data-i18n="view3d">Maquette 3D</button>
+    </div>
     <div class="map-frame" id="map">
       <img src="assets/fond-carte.png" alt="Carte aquarelle du Château du Feÿ" draggable="false">
+    </div>
+    <div id="scene3d">
+      <div class="scene-hud">
+        <button id="g-peint" class="on" data-i18n="gPaint">Peint</button>
+        <button id="g-sat">Satellite</button>
+        <button id="g-reset" data-i18n="gReset">Recentrer</button>
+      </div>
+      <div id="label3d"></div>
     </div>
     <div class="legend" id="legend">
       <span class="cap" data-i18n="findLabel">Trouver</span>
@@ -358,6 +427,7 @@ footer p {
 <footer>
   <div class="mono">C&nbsp;&amp;&nbsp;S</div>
   <p data-i18n="footer">Programme susceptible d’évoluer, la carte aussi. Faites-vous plaisir.</p>
+  <p style="font-size:11.5px; margin-top:14px; opacity:0.65;">Vue satellite © IGN · Empreintes © les contributeurs d’OpenStreetMap</p>
 </footer>
 
 <script>
@@ -427,6 +497,7 @@ const I18N = {
   fr: {
     eyebrow: "Le mariage de", dates: "25, 26 & 27 août 2026",
     findLabel: "Trouver", eqSleep: "Dormir", eqShower: "Douches",
+    view2d: "Aquarelle", view3d: "Maquette 3D", gPaint: "Peint", gReset: "Recentrer",
     footer: "Programme susceptible d’évoluer, la carte aussi. Faites-vous plaisir.",
     days: { "25": ["Mar", "25"], "26": ["Mer", "26"], "27": ["Jeu", "27"], cont: ["Les", "3 jours"] },
     progTitles: { "25": "Mardi 25 août", "26": "Mercredi 26 août", "27": "Jeudi 27 août", cont: "Pendant les 3 jours" },
@@ -441,6 +512,7 @@ const I18N = {
   en: {
     eyebrow: "The wedding of", dates: "25, 26 & 27 August 2026",
     findLabel: "Find", eqSleep: "Sleep", eqShower: "Showers",
+    view2d: "Watercolour", view3d: "3D model", gPaint: "Painted", gReset: "Reset view",
     footer: "Programme may evolve, so may the map. Enjoy.",
     days: { "25": ["Tue", "25"], "26": ["Wed", "26"], "27": ["Thu", "27"], cont: ["All", "3 days"] },
     progTitles: { "25": "Tuesday 25 August", "26": "Wednesday 26 August", "27": "Thursday 27 August", cont: "Throughout the 3 days" },
@@ -605,8 +677,416 @@ function render() {
     document.getElementById("pin-" + id).classList.add("selected");
     showLabel(id);
   }
+  if (window.map3d) window.map3d.sync({ selected: selected !== null ? EVENTS[selected].lieu : null, eqFilter, lang });
 }
 render();
+
+/* ============ BASCULE 2D / 3D ============ */
+let mode = "2d";
+const v2dBtn = document.getElementById("v2d");
+const v3dBtn = document.getElementById("v3d");
+function setMode(m) {
+  mode = m;
+  v2dBtn.classList.toggle("active", m === "2d");
+  v3dBtn.classList.toggle("active", m === "3d");
+  document.getElementById("map").classList.toggle("off", m === "3d");
+  document.getElementById("scene3d").classList.toggle("on", m === "3d");
+  if (m === "3d") {
+    if (!window.map3dReady) window.initMap3d && window.initMap3d();
+    else window.map3d.resume();
+  } else if (window.map3d) window.map3d.pause();
+}
+v2dBtn.addEventListener("click", () => setMode("2d"));
+v3dBtn.addEventListener("click", () => setMode("3d"));
+window.appState = () => ({ selected: selected !== null ? EVENTS[selected].lieu : null, eqFilter, lang });
+window.pinClickFrom3d = (id) => pinClick(id);
+window.lieuxData = LIEUX;
+</script>
+
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const C = {
+  cream: 0xf6f2e2, ground: 0xf1ecd5, stone: 0xefe4cb, stoneFarm: 0xe9dcbf,
+  white: 0xf6f3e8, roofChateau: 0x8e4638, roofFarm: 0xb0674a, roofOrangerie: 0xd8d2bd,
+  trunk: 0x8a6a4a, leafA: 0x9aa860, leafB: 0x87995a, leafDark: 0x6d8050,
+  water: 0x9fc3d2, path: 0xf3eedd, wallBrick: 0xc98d72, hedge: 0x7d8f52,
+  gold: 0xd9b96a, bordeaux: 0x6e1518, terracotta: 0xc06a2e,
+};
+
+let renderer, scene, camera, controls, raycaster, pointer;
+let groundPeint, groundSat, pinGroup;
+const pinSprites = {};
+let running = false, hoveredPin = null;
+
+function makePinTexture(num, style) {
+  const s = 128, cv = document.createElement("canvas");
+  cv.width = cv.height = s;
+  const g = cv.getContext("2d");
+  g.clearRect(0, 0, s, s);
+  g.beginPath(); g.arc(s/2, s/2, 52, 0, Math.PI*2);
+  g.fillStyle = style === "lit" || style === "sel" ? "#c06a2e" : "#6e1518";
+  g.fill();
+  if (style === "sel" || style === "lit") {
+    g.lineWidth = 7; g.strokeStyle = "#d9b96a";
+    g.beginPath(); g.arc(s/2, s/2, 58, 0, Math.PI*2); g.stroke();
+  }
+  g.lineWidth = 5; g.strokeStyle = "#f6f2e2";
+  g.beginPath(); g.arc(s/2, s/2, 52, 0, Math.PI*2); g.stroke();
+  g.fillStyle = "#f6f2e2";
+  g.font = "600 56px 'Bodoni Moda', serif";
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(String(num), s/2, s/2 + 4);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+function shapeFromPoly(poly) {
+  const sh = new THREE.Shape();
+  poly.forEach((p, i) => { i === 0 ? sh.moveTo(p[0], -p[1]) : sh.lineTo(p[0], -p[1]); });
+  return sh;
+}
+
+function ribbon(line, w, y, color) {
+  const geos = [];
+  for (let i = 0; i < line.length - 1; i++) {
+    const [x1, y1] = line[i], [x2, y2] = line[i+1];
+    const dx = x2-x1, dy = y2-y1, len = Math.hypot(dx, dy);
+    if (len < 0.5) continue;
+    const g = new THREE.PlaneGeometry(len, w);
+    g.rotateX(-Math.PI/2);
+    g.rotateY(Math.atan2(-(-y2 - -y1), dx));
+    g.translate((x1+x2)/2, y, (-y1 + -y2)/2);
+    geos.push(g);
+  }
+  if (!geos.length) return null;
+  const mat = new THREE.MeshLambertMaterial({ color });
+  const mesh = new THREE.Mesh(mergeGeos(geos), mat);
+  mesh.receiveShadow = true;
+  return mesh;
+}
+function mergeGeos(geos) {
+  let total = 0;
+  geos.forEach(g => total += g.attributes.position.count);
+  const merged = new THREE.BufferGeometry();
+  const pos = new Float32Array(total*3), norm = new Float32Array(total*3), uv = new Float32Array(total*2);
+  const idx = [];
+  let vo = 0;
+  geos.forEach(g => {
+    pos.set(g.attributes.position.array, vo*3);
+    norm.set(g.attributes.normal.array, vo*3);
+    uv.set(g.attributes.uv.array, vo*2);
+    const gi = g.index.array;
+    for (let i = 0; i < gi.length; i++) idx.push(gi[i] + vo);
+    vo += g.attributes.position.count;
+  });
+  merged.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  merged.setAttribute("normal", new THREE.BufferAttribute(norm, 3));
+  merged.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  merged.setIndex(idx);
+  return merged;
+}
+
+window.initMap3d = async function () {
+  window.map3dReady = true;
+  const wrap = document.getElementById("scene3d");
+  const data = await (await fetch("scene.json")).json();
+  const EXT = data.extent;
+  const CX = (EXT.xmin+EXT.xmax)/2, CZ = -(EXT.ymin+EXT.ymax)/2;
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  wrap.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(C.cream);
+  scene.fog = new THREE.Fog(C.cream, 550, 950);
+
+  camera = new THREE.PerspectiveCamera(40, wrap.clientWidth/wrap.clientHeight, 1, 2000);
+  camera.position.set(-165, 185, 205);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(-15, 0, -35);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.maxPolarAngle = Math.PI * 0.46;
+  controls.minDistance = 60; controls.maxDistance = 620;
+
+  scene.add(new THREE.AmbientLight(0xfff6e0, 1.05));
+  const sun = new THREE.DirectionalLight(0xffe9c4, 1.6);
+  sun.position.set(-180, 260, 160);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  const sc = sun.shadow.camera;
+  sc.left = -280; sc.right = 280; sc.top = 280; sc.bottom = -280; sc.far = 900;
+  scene.add(sun);
+
+  /* sol : deux textures interchangeables */
+  const loader = new THREE.TextureLoader();
+  const mkGround = (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(EXT.xmax-EXT.xmin, EXT.ymax-EXT.ymin),
+      new THREE.MeshLambertMaterial({ map: tex })
+    );
+    m.rotation.x = -Math.PI/2;
+    m.position.set(CX, 0, CZ);
+    m.receiveShadow = true;
+    return m;
+  };
+  groundPeint = mkGround(loader.load("assets/sol-peint.jpg"));
+  groundSat = mkGround(loader.load("assets/sol-satellite.jpg"));
+  groundSat.visible = false;
+  scene.add(groundPeint, groundSat);
+  /* assiette creme sous la scene */
+  const mat = new THREE.Mesh(new THREE.CylinderGeometry(430, 430, 6, 64),
+    new THREE.MeshLambertMaterial({ color: C.ground }));
+  mat.position.set(CX, -3.2, CZ);
+  scene.add(mat);
+
+  /* batiments */
+  const wallCols = { chateau: C.stone, farm: C.stoneFarm, wing: C.stoneFarm, orangerie: C.white, hut: 0xd9d2b8 };
+  const roofCols = { chateau: C.roofChateau, farm: C.roofFarm, wing: C.roofFarm, orangerie: C.roofOrangerie, hut: 0xa8a284 };
+  data.buildings.forEach(b => {
+    const sh = shapeFromPoly(b.poly);
+    const walls = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(sh, { depth: b.h, bevelEnabled: false }),
+      new THREE.MeshLambertMaterial({ color: wallCols[b.kind] })
+    );
+    walls.rotation.x = -Math.PI/2;
+    walls.castShadow = walls.receiveShadow = true;
+    scene.add(walls);
+    /* toit : meme empreinte legerement dilatee, en pente stylisee */
+    const pts = b.poly;
+    const cx = pts.reduce((s,p)=>s+p[0],0)/pts.length, cy = pts.reduce((s,p)=>s+p[1],0)/pts.length;
+    const roofSh = shapeFromPoly(pts.map(p => [cx + (p[0]-cx)*1.07, cy + (p[1]-cy)*1.07]));
+    const roof = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(roofSh, { depth: b.roof, bevelEnabled: true, bevelThickness: 1.4, bevelSize: -1.2, bevelSegments: 1 }),
+      new THREE.MeshLambertMaterial({ color: roofCols[b.kind] })
+    );
+    roof.rotation.x = -Math.PI/2;
+    roof.position.y = b.h;
+    roof.castShadow = true;
+    scene.add(roof);
+  });
+
+  /* pigeonnier : tour ronde + toit conique */
+  const tower = new THREE.Mesh(new THREE.CylinderGeometry(3.6, 3.9, 9, 20),
+    new THREE.MeshLambertMaterial({ color: C.stone }));
+  tower.position.set(30.5, 4.5, -80.1);
+  tower.castShadow = true;
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(4.6, 4.5, 20),
+    new THREE.MeshLambertMaterial({ color: C.roofChateau }));
+  cone.position.set(30.5, 11.2, -80.1);
+  cone.castShadow = true;
+  scene.add(tower, cone);
+
+  /* eau */
+  data.water.forEach(w => {
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(shapeFromPoly(w.poly)),
+      new THREE.MeshLambertMaterial({ color: C.water }));
+    m.rotation.x = -Math.PI/2; m.position.y = 0.18;
+    scene.add(m);
+  });
+
+  /* chemins */
+  data.paths.forEach(p => {
+    const clip = p.line.filter(q => q[0] > EXT.xmin-5 && q[0] < EXT.xmax+5 && q[1] > EXT.ymin-5 && q[1] < EXT.ymax+5);
+    const r = ribbon(clip, p.w, 0.08, C.path);
+    if (r) scene.add(r);
+  });
+
+  /* murs du jardin clos */
+  data.walls.forEach(w => {
+    const r = ribbon(w.line, 0.7, 0, C.wallBrick);
+    if (!r) return;
+    const geo = r.geometry.clone();
+    const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: C.wallBrick }));
+    m.position.y = 2.1;
+    /* muret simple : deux rubans empiles pour figurer la hauteur */
+    const m2 = m.clone(); m2.position.y = 1.05;
+    const m3 = m.clone(); m3.position.y = 0.2;
+    [m, m2, m3].forEach(x => scene.add(x));
+  });
+
+  /* arbres instancies */
+  const trunkGeo = new THREE.CylinderGeometry(0.35, 0.5, 2.4, 6);
+  const leafGeo = new THREE.IcosahedronGeometry(1, 1);
+  const trunkMat = new THREE.MeshLambertMaterial({ color: C.trunk });
+  const mkLeaves = (col) => new THREE.MeshLambertMaterial({ color: col });
+  const cols = [C.leafA, C.leafB, C.leafDark];
+  const groupsByCol = [[], [], []];
+  data.trees.forEach((t, i) => groupsByCol[i % 3].push(t));
+  groupsByCol.forEach((list, gi) => {
+    if (!list.length) return;
+    const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, list.length);
+    const leaves = new THREE.InstancedMesh(leafGeo, mkLeaves(cols[gi]), list.length);
+    const M = new THREE.Matrix4();
+    list.forEach((t, i) => {
+      const [x, y, h] = t;
+      M.makeTranslation(x, 1.2, -y);
+      trunks.setMatrixAt(i, M);
+      const s = h * 0.55;
+      M.makeScale(s, s*0.92, s).setPosition(x, 2 + s*0.72, -y);
+      leaves.setMatrixAt(i, M);
+    });
+    trunks.castShadow = leaves.castShadow = true;
+    scene.add(trunks, leaves);
+  });
+
+  /* tentes glamping */
+  const tentGeo = new THREE.SphereGeometry(2.6, 14, 10, 0, Math.PI*2, 0, Math.PI/2);
+  const tentMat = new THREE.MeshLambertMaterial({ color: 0xf3efe0 });
+  data.tents.forEach(t => {
+    const m = new THREE.Mesh(tentGeo, tentMat);
+    m.position.set(t[0], 0.1, -t[1]);
+    m.castShadow = true;
+    scene.add(m);
+  });
+
+  /* labyrinthe stylise : anneaux de haies au pin 15 */
+  const p15 = data.pins.find(p => p.n === 15);
+  [7, 4.6, 2.4].forEach((r, i) => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.8, 8, 40, Math.PI * (1.55 + i*0.12)),
+      new THREE.MeshLambertMaterial({ color: C.hedge }));
+    ring.rotation.x = -Math.PI/2;
+    ring.position.set(p15.x, 0.9, -p15.y);
+    ring.castShadow = true;
+    scene.add(ring);
+  });
+
+  /* sonic sphere : sphere filaire doree */
+  const p14 = data.pins.find(p => p.n === 14);
+  const sph = new THREE.Mesh(new THREE.IcosahedronGeometry(4.5, 1),
+    new THREE.MeshBasicMaterial({ color: C.gold, wireframe: true }));
+  sph.position.set(p14.x, 4.8, -p14.y);
+  scene.add(sph);
+
+  /* petanque : cercle de sable */
+  const p21 = data.pins.find(p => p.n === 21);
+  const sand = new THREE.Mesh(new THREE.CircleGeometry(6, 24),
+    new THREE.MeshLambertMaterial({ color: 0xe4cfa4 }));
+  sand.rotation.x = -Math.PI/2;
+  sand.position.set(p21.x, 0.12, -p21.y);
+  scene.add(sand);
+
+  /* pins : sprites numerotes + tige */
+  pinGroup = new THREE.Group();
+  const stemMat = new THREE.MeshBasicMaterial({ color: C.bordeaux });
+  data.pins.forEach(p => {
+    const hBase = p.n === 1 ? 17 : [2,3,4,5,6,9,10,11,12].includes(p.n) ? 11 : 8;
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: makePinTexture(p.n, "base"), depthTest: false }));
+    spr.scale.set(9, 9, 1);
+    spr.position.set(p.x, hBase, -p.y);
+    spr.userData = { n: p.n, hBase };
+    spr.renderOrder = 50;
+    pinGroup.add(spr);
+    pinSprites[p.n] = spr;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, hBase, 5), stemMat);
+    stem.position.set(p.x, hBase/2, -p.y);
+    pinGroup.add(stem);
+  });
+  scene.add(pinGroup);
+
+  /* interactions */
+  raycaster = new THREE.Raycaster();
+  pointer = new THREE.Vector2();
+  const label3d = document.getElementById("label3d");
+  const toPointer = (e) => {
+    const r = wrap.getBoundingClientRect();
+    pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  };
+  wrap.addEventListener("pointermove", (e) => { toPointer(e); });
+  wrap.addEventListener("click", (e) => {
+    toPointer(e);
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(Object.values(pinSprites));
+    if (hit.length) window.pinClickFrom3d(hit[0].object.userData.n);
+  });
+
+  /* HUD */
+  const gp = document.getElementById("g-peint"), gs = document.getElementById("g-sat");
+  gp.addEventListener("click", () => { groundPeint.visible = true; groundSat.visible = false; gp.classList.add("on"); gs.classList.remove("on"); });
+  gs.addEventListener("click", () => { groundPeint.visible = false; groundSat.visible = true; gs.classList.add("on"); gp.classList.remove("on"); });
+  document.getElementById("g-reset").addEventListener("click", () => {
+    camera.position.set(-165, 185, 205);
+    controls.target.set(-15, 0, -35);
+  });
+
+  addEventListener("resize", () => {
+    if (!wrap.clientWidth) return;
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  });
+
+  let state = window.appState();
+  window.map3d = {
+    sync(s) { state = s; paint3d(state); },
+    pause() { running = false; },
+    resume() { running = true; loop(); },
+  };
+
+  function paint3d(s) {
+    const L = window.lieuxData;
+    for (const [n, spr] of Object.entries(pinSprites)) {
+      const eq = L[n] ? L[n].eq : [];
+      let style = "base", scale = 9, opacity = 1;
+      if (s.eqFilter) {
+        if (eq.includes(s.eqFilter)) { style = "lit"; scale = 11; }
+        else opacity = 0.25;
+      }
+      if (s.selected && Number(n) === s.selected) { style = "sel"; scale = 12.5; }
+      spr.material.map = makePinTexture(n, style);
+      spr.material.opacity = opacity;
+      spr.material.needsUpdate = true;
+      spr.scale.set(scale, scale, 1);
+    }
+    /* label du pin selectionne */
+    if (s.selected && pinSprites[s.selected]) {
+      label3d.textContent = L[s.selected][s.lang];
+      label3d.style.display = "block";
+    } else label3d.style.display = "none";
+  }
+
+  function loop() {
+    if (!running) return;
+    requestAnimationFrame(loop);
+    controls.update();
+    /* hover */
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(Object.values(pinSprites));
+    const over = hit.length ? hit[0].object.userData.n : null;
+    if (over !== hoveredPin) {
+      hoveredPin = over;
+      wrap.style.cursor = over ? "pointer" : "grab";
+    }
+    /* label suit le pin selectionne */
+    if (state.selected && pinSprites[state.selected]) {
+      const v = pinSprites[state.selected].position.clone();
+      v.y += 7;
+      v.project(camera);
+      label3d.style.left = ((v.x + 1) / 2 * wrap.clientWidth) + "px";
+      label3d.style.top = ((-v.y + 1) / 2 * wrap.clientHeight) + "px";
+    }
+    renderer.render(scene, camera);
+  }
+  paint3d(state);
+  running = true;
+  loop();
+};
 </script>
 </body>
 </html>
